@@ -1,0 +1,41 @@
+# --- Build artefacts ---
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+/.next/
+/out/
+/build
+/coverage
+
+# --- Logs / debug ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- IDE / OS ---
+.DS_Store
+*.pem
+.idea/
+.vscode/
+
+# --- TypeScript ---
+*.tsbuildinfo
+next-env.d.ts
+
+# --- Vercel ---
+.vercel
+
+# --- Secrets (NEVER commit) ---
+# .env* is the conventional ignore. We re-allow only the example file.
+.env*
+!.env.example
+
+# --- Local Supabase ---
+supabase/.branches
+supabase/.temp

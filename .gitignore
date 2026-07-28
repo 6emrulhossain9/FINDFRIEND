@@ -1,0 +1,30 @@
+# --- Secrets (NEVER commit) ---
+.env*
+!.env.example
+
+# --- Dependencies ---
+node_modules/
+
+# --- Build artefacts ---
+.next/
+/out/
+/build
+/coverage
+
+# --- IDE / OS ---
+.DS_Store
+*.pem
+.idea/
+.vscode/
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+*.log
+
+# --- TypeScript ---
+*.tsbuildinfo
+
+# --- Local Supabase ---
+supabase/.branches
+supabase/.temp
