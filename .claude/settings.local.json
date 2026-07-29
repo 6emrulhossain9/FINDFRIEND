@@ -3,7 +3,8 @@
     "allow": [
       "PowerShell(npm *)",
       "PowerShell(Get-Command *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(npm run build 2>&1)"
     ]
   }
 }

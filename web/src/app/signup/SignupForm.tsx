@@ -26,10 +26,10 @@ export function SignupForm() {
           name="email"
           autoComplete="email"
           required
-          className="rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700"
+          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
         />
         {showFieldErrors("email")?.map((e) => (
-          <p key={e} className="text-xs text-red-600">{e}</p>
+          <p key={e} className="text-xs text-danger">{e}</p>
         ))}
       </label>
 
@@ -40,12 +40,12 @@ export function SignupForm() {
           name="date_of_birth"
           max={maxDateStr}
           required
-          className="rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700"
+          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
         />
         {showFieldErrors("date_of_birth")?.map((e) => (
-          <p key={e} className="text-xs text-red-600">{e}</p>
+          <p key={e} className="text-xs text-danger">{e}</p>
         ))}
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-text-tertiary">
           You must be at least 13 to sign up.
         </p>
       </label>
@@ -58,18 +58,18 @@ export function SignupForm() {
           autoComplete="new-password"
           minLength={8}
           required
-          className="rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700"
+          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
         />
         {showFieldErrors("password")?.map((e) => (
-          <p key={e} className="text-xs text-red-600">{e}</p>
+          <p key={e} className="text-xs text-danger">{e}</p>
         ))}
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-text-tertiary">
           8+ characters, with at least one letter and one number.
         </p>
       </label>
 
       {state && state.ok === false && state.message ? (
-        <p className="text-sm text-red-600" role="alert">{state.message}</p>
+        <p className="text-sm text-danger" role="alert">{state.message}</p>
       ) : null}
 
       <button

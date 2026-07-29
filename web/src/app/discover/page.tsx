@@ -135,13 +135,13 @@ export default async function DiscoverPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
       <h1 className="text-3xl font-bold">Discover</h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-sm text-text-soft">
         People who share your interests. Ranked by mutual-interest overlap.
       </p>
 
       <div className="mt-6 space-y-3">
         {ranked.length === 0 ? (
-          <p className="py-12 text-center text-zinc-500">
+          <p className="py-12 text-center text-text-tertiary">
             No matches yet. Add more interests on your profile to see suggestions.
           </p>
         ) : (

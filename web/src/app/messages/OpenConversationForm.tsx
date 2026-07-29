@@ -17,7 +17,7 @@ export function OpenConversationForm({ partnerId }: OpenConversationFormProps) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md border border-zinc-300 px-4 py-2 text-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900 disabled:opacity-60"
+        className="w-full rounded-full border border-accent px-5 py-2.5 text-sm font-normal text-accent transition-fast hover:bg-accent/5 active:scale-[0.95] disabled:opacity-50"
       >
         {pending ? "Opening…" : "Message"}
       </button>

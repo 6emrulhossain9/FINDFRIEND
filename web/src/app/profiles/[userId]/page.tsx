@@ -88,7 +88,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     .single();
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8">
+    <div className="min-h-screen bg-surface px-4 py-8">
       <div className="mx-auto max-w-md">
         <ProfileViewHeader profile={profile} mutualCount={mutualCount} interests={interests} />
 

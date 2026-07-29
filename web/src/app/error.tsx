@@ -28,17 +28,17 @@ export default function RootError({
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center gap-4 px-6 text-center">
       <h1 className="text-2xl font-semibold">Something went wrong</h1>
-      <p className="text-zinc-600 dark:text-zinc-400">
+      <p className="text-text-soft">
         We hit an unexpected problem rendering this page. Please try again.
       </p>
       {error.digest ? (
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-text-tertiary">
           Reference: <code>{error.digest}</code>
         </p>
       ) : null}
       <button
         onClick={() => unstable_retry()}
-        className="mx-auto rounded-md bg-foreground px-4 py-2 text-background transition-opacity hover:opacity-90"
+        className="mx-auto rounded-full bg-accent px-5 py-2.5 text-sm font-normal text-white transition-fast hover:bg-accent-dark active:scale-[0.95]"
       >
         Try again
       </button>

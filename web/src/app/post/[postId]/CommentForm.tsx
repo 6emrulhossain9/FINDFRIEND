@@ -21,21 +21,21 @@ export function CommentForm({ postId }: { postId: string }) {
         placeholder="Write a comment…"
         required
         disabled={pending}
-        className="w-full resize-none rounded-md border border-zinc-300 bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-foreground/30 disabled:opacity-60 dark:border-zinc-700"
+        className="w-full resize-none rounded-xl border border-border-base bg-surface px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-accent/30 disabled:opacity-60 placeholder:text-text-soft"
       />
       {state && state.ok === false && state.errors?.content && (
-        <p className="text-xs text-red-600">
+        <p className="text-xs text-danger">
           {state.errors.content.join(", ")}
         </p>
       )}
       {state && state.ok === false && state.message && (
-        <p className="text-xs text-red-600">{state.message}</p>
+        <p className="text-xs text-danger">{state.message}</p>
       )}
       <div className="flex justify-end">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-foreground px-4 py-2 text-sm text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] active:bg-accent-dark disabled:opacity-50"
         >
           {pending ? "Posting…" : "Comment"}
         </button>

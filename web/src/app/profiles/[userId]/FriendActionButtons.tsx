@@ -1,4 +1,4 @@
-// FriendActionButtons — handles friend requests, block, mute, report
+// FriendActionButtons — Apple-style action buttons for profiles
 
 "use client";
 
@@ -38,7 +38,7 @@ export function FriendActionButtons({
   const [, unmuteAction, unmutePending] = useActionState(unmuteUser, undefined);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {/* Friend request button */}
       {!isBlocked && !friendshipStatus && (
         <form action={friendAction} className="w-full">
@@ -46,7 +46,7 @@ export function FriendActionButtons({
           <button
             type="submit"
             disabled={friendPending}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 text-white transition-opacity hover:bg-blue-700 disabled:opacity-60"
+            className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50"
           >
             {friendPending ? "Sending…" : "Send Friend Request"}
           </button>
@@ -55,75 +55,53 @@ export function FriendActionButtons({
 
       {/* Friend request status */}
       {friendshipStatus === "pending" && (
-        <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-center text-sm text-text-soft">
           Friend request sent, waiting for response
         </p>
       )}
       {friendshipStatus === "accepted" && (
         <div className="space-y-2">
-          <p className="text-center text-sm text-green-600 dark:text-green-400">
+          <p className="text-center text-sm font-medium text-success">
             You&apos;re friends!
           </p>
           <OpenConversationForm partnerId={targetUserId} />
         </div>
       )}
 
-      {/* Block/Unblock button */}
-      {isBlocked ? (
-        <form action={unblockAction} className="w-full">
-          <input type="hidden" name="blocked_user_id" value={targetUserId} />
-          <button
-            type="submit"
-            disabled={unblockPending}
-            className="w-full rounded-md border border-zinc-300 px-4 py-2 text-sm transition-opacity hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900 disabled:opacity-60"
-          >
-            {unblockPending ? "Unblocking…" : "Unblock"}
-          </button>
-        </form>
-      ) : (
-        <form action={blockAction} className="w-full">
-          <input type="hidden" name="target_user_id" value={targetUserId} />
-          <button
-            type="submit"
-            disabled={blockPending}
-            className="w-full rounded-md border border-red-300 px-4 py-2 text-sm text-red-600 transition-opacity hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20 disabled:opacity-60"
-          >
-            {blockPending ? "Blocking…" : "Block"}
-          </button>
-        </form>
-      )}
+      {/* Block/Unblock */}
+      <form action={isBlocked ? unblockAction : blockAction} className="w-full">
+        <input type="hidden" name={isBlocked ? "blocked_user_id" : "target_user_id"} value={targetUserId} />
+        <button
+          type="submit"
+          disabled={isBlocked ? unblockPending : blockPending}
+          className="w-full rounded-full border border-danger/30 px-5 py-2.5 text-sm font-medium text-danger transition-fast hover:bg-danger-light active:scale-[0.95] disabled:opacity-50"
+        >
+          {isBlocked
+            ? unblockPending ? "Unblocking…" : "Unblock"
+            : blockPending ? "Blocking…" : "Block"}
+        </button>
+      </form>
 
-      {/* Mute/Unmute button */}
-      {isMuted ? (
-        <form action={unmuteAction} className="w-full">
-          <input type="hidden" name="muted_user_id" value={targetUserId} />
-          <button
-            type="submit"
-            disabled={unmutePending}
-            className="w-full rounded-md border border-zinc-300 px-4 py-2 text-sm transition-opacity hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900 disabled:opacity-60"
-          >
-            {unmutePending ? "Unmuting…" : "Unmute"}
-          </button>
-        </form>
-      ) : (
-        <form action={muteAction} className="w-full">
-          <input type="hidden" name="target_user_id" value={targetUserId} />
-          <button
-            type="submit"
-            disabled={mutePending}
-            className="w-full rounded-md border border-zinc-300 px-4 py-2 text-sm transition-opacity hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900 disabled:opacity-60"
-          >
-            {mutePending ? "Muting…" : "Mute"}
-          </button>
-        </form>
-      )}
+      {/* Mute/Unmute */}
+      <form action={isMuted ? unmuteAction : muteAction} className="w-full">
+        <input type="hidden" name={isMuted ? "muted_user_id" : "target_user_id"} value={targetUserId} />
+        <button
+          type="submit"
+          disabled={isMuted ? unmutePending : mutePending}
+          className="w-full rounded-full border border-border-base px-5 py-2.5 text-sm font-medium text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95] disabled:opacity-50"
+        >
+          {isMuted
+            ? unmutePending ? "Unmuting…" : "Unmute"
+            : mutePending ? "Muting…" : "Mute"}
+        </button>
+      </form>
 
-      {/* Report button — opens a dialog with reason + description */}
+      {/* Report button */}
       <ReportButton targetUserId={targetUserId} />
 
       {/* Status messages */}
       {friendState && friendState.ok === false && (
-        <p className="text-xs text-red-600">{friendState.message}</p>
+        <p className="text-xs text-danger">{friendState.message}</p>
       )}
     </div>
   );

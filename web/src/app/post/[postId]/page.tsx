@@ -90,12 +90,12 @@ export default async function PostPage({ params }: PostPageProps) {
     <main className="mx-auto max-w-2xl px-4 py-8">
       <Link
         href="/feed"
-        className="mb-4 inline-block text-sm text-zinc-500 hover:underline"
+        className="mb-4 inline-block text-sm text-text-tertiary hover:text-accent transition-fast"
       >
         ← Back to feed
       </Link>
 
-      <article className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+      <article className="apple-card p-5">
         <header className="mb-3 flex items-center gap-3">
           {authorProfile?.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -105,7 +105,7 @@ export default async function PostPage({ params }: PostPageProps) {
               className="h-10 w-10 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-300 text-lg dark:bg-zinc-700">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-hover text-lg ring-2 ring-white dark:ring-black">
               👤
             </div>
           )}
@@ -116,12 +116,12 @@ export default async function PostPage({ params }: PostPageProps) {
             >
               {authorProfile?.display_name ?? "Unknown"}
             </Link>
-            <p className="text-xs text-zinc-500">{formatDate(post.created_at)}</p>
+            <p className="text-xs text-text-tertiary">{formatDate(post.created_at)}</p>
           </div>
         </header>
         <p className="whitespace-pre-wrap text-sm">{post.content}</p>
         {reactionCount > 0 && (
-          <p className="mt-3 text-xs text-zinc-500">
+          <p className="mt-3 text-xs text-text-tertiary">
             {reactionCount} reaction{reactionCount !== 1 ? "s" : ""}
           </p>
         )}

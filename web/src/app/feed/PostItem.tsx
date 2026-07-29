@@ -61,7 +61,7 @@ export function PostItem({ post, currentUserId }: PostItemProps) {
   };
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="apple-card p-5">
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
         {post.profiles?.avatar_url ? (
@@ -69,30 +69,30 @@ export function PostItem({ post, currentUserId }: PostItemProps) {
           <img
             src={post.profiles.avatar_url}
             alt={post.profiles.display_name}
-            className="h-10 w-10 rounded-full object-cover"
+            className="h-10 w-10 rounded-full object-cover ring-2 ring-white dark:ring-black"
           />
         ) : (
-          <div className="h-10 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-full bg-surface-hover flex items-center justify-center ring-2 ring-white dark:ring-black">
             <span className="text-lg">👤</span>
           </div>
         )}
         <div>
           <Link
             href={`/profiles/${post.author_id}`}
-            className="font-medium hover:underline"
+            className="font-medium text-sm text-text-main hover:text-accent transition-fast"
           >
             {post.profiles?.display_name || "Unknown"}
           </Link>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-text-soft">
             {formatDate(post.created_at)}
           </p>
         </div>
       </div>
 
       {/* Content */}
-      <p className="text-sm whitespace-pre-wrap mb-4">{post.content}</p>
+      <p className="text-sm text-text-main whitespace-pre-wrap mb-4 leading-relaxed">{post.content}</p>
 
-      {/* Reactions */}
+      {/* Reaction bar — active reactions */}
       <div className="flex flex-wrap gap-2 mb-4 text-xs">
         {Object.entries(reactionCounts).map(([type, count]) => (
           <button
@@ -104,10 +104,10 @@ export function PostItem({ post, currentUserId }: PostItemProps) {
               await formAction(formData);
             }}
             disabled={pending}
-            className={`rounded-full px-2 py-1 transition-colors ${
+            className={`rounded-full px-3 py-1.5 transition-fast active:scale-95 ${
               userReactions.has(type)
-                ? "bg-blue-100 dark:bg-blue-900/30"
-                : "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                ? "bg-accent/10 text-accent font-medium"
+                : "bg-surface-hover text-text-soft hover:bg-surface-hover"
             }`}
           >
             {reactionEmojis[type] || type} {count}
@@ -115,8 +115,8 @@ export function PostItem({ post, currentUserId }: PostItemProps) {
         ))}
       </div>
 
-      {/* Reaction buttons */}
-      <div className="flex gap-4 border-t border-zinc-200 dark:border-zinc-700 pt-3 text-xs text-zinc-600">
+      {/* Reaction emoji buttons */}
+      <div className="flex gap-3 pt-3 border-t border-separator text-sm">
         {Object.entries(reactionEmojis).map(([type, emoji]) => (
           <form key={type} action={formAction} className="flex-1">
             <input type="hidden" name="post_id" value={post.id} />
@@ -124,7 +124,11 @@ export function PostItem({ post, currentUserId }: PostItemProps) {
             <button
               type="submit"
               disabled={pending}
-              className="w-full py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors disabled:opacity-60"
+              className={`w-full py-1.5 rounded-full transition-fast active:scale-90 ${
+                userReactions.has(type)
+                  ? "bg-accent/10"
+                  : "hover:bg-surface-hover"
+              }`}
             >
               {emoji}
             </button>
@@ -134,9 +138,12 @@ export function PostItem({ post, currentUserId }: PostItemProps) {
 
       {/* Comments count */}
       {post.comments.length > 0 && (
-        <p className="mt-3 text-xs text-zinc-500">
+        <Link
+          href={`/post/${post.id}`}
+          className="mt-3 text-xs text-text-soft hover:text-accent transition-fast inline-block"
+        >
           {post.comments.length} comment{post.comments.length !== 1 ? "s" : ""}
-        </p>
+        </Link>
       )}
     </div>
   );

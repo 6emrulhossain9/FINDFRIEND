@@ -25,20 +25,20 @@ export default async function OnboardingPage() {
 
   if (error || !interests?.length) {
     return (
-      <div className="min-h-screen bg-background px-4 py-8">
+      <div className="min-h-screen bg-surface px-4 py-8">
         <div className="mx-auto max-w-md">
-          <p className="text-red-600">Could not load interests. Please try again later.</p>
+          <p className="text-danger">Could not load interests. Please try again later.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8">
+    <div className="min-h-screen bg-surface px-4 py-8">
       <div className="mx-auto max-w-md">
         <div className="mb-8">
           <h1 className="text-2xl font-bold">Welcome to ViCo</h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-sm text-text-soft">
             Complete your profile to get started. We&apos;ll match you with people who share your interests.
           </p>
         </div>

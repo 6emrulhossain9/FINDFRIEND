@@ -1,11 +1,8 @@
-// FriendRequestInbox — list of pending friend requests the user has received.
-//
-// Each row shows the requester's avatar and name, with Accept / Decline
-// buttons. Submitting posts to `respondToFriendRequest` (Phase 3).
+// FriendRequestInbox — Apple-style pending friend requests list
 
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 import { respondToFriendRequest } from "@/app/actions/social";
 import type { SocialFormState } from "@/lib/validation/social";
@@ -39,7 +36,7 @@ function timeAgo(dateStr: string): string {
 export function FriendRequestInbox({ requests }: FriendRequestInboxProps) {
   if (requests.length === 0) {
     return (
-      <p className="text-sm text-zinc-500">No pending requests.</p>
+      <p className="text-sm text-text-soft">No pending requests.</p>
     );
   }
 
@@ -57,36 +54,38 @@ function InboxRow({ request }: { request: PendingRequest }) {
     respondToFriendRequest,
     undefined,
   );
+  const [exiting, setExiting] = useState(false);
 
-  // After success, the row will disappear on the next render (because the
-  // page revalidates) — but we still hide the buttons so the user sees
-  // immediate feedback.
   useEffect(() => {
     if (state && state.ok === true) {
-      // no-op; row refresh happens via revalidatePath
+      setExiting(true);
     }
   }, [state]);
 
   return (
-    <li className="flex items-center gap-3 rounded-md border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+    <li
+      className={`flex items-center gap-3 rounded-xl bg-surface-hover p-3.5 transition-all duration-200 ease-out ${
+        exiting ? "opacity-0 scale-95" : "opacity-100 scale-100"
+      }`}
+    >
       {request.requester?.avatar_url ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={request.requester.avatar_url}
           alt={request.requester.display_name}
-          className="h-10 w-10 rounded-full object-cover"
+          className="h-10 w-10 rounded-full object-cover ring-2 ring-white dark:ring-black"
         />
       ) : (
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-300 text-lg dark:bg-zinc-700">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-hover text-lg ring-2 ring-white dark:ring-black">
           👤
         </div>
       )}
 
       <div className="flex-1">
-        <p className="text-sm font-medium">
+        <p className="text-sm font-medium text-text-main">
           {request.requester?.display_name ?? "Someone"}
         </p>
-        <p className="text-xs text-zinc-500">{timeAgo(request.created_at)}</p>
+        <p className="text-xs text-text-soft">{timeAgo(request.created_at)}</p>
       </div>
 
       <form action={formAction} className="flex gap-2">
@@ -96,7 +95,7 @@ function InboxRow({ request }: { request: PendingRequest }) {
           name="decision"
           value="accept"
           disabled={pending}
-          className="rounded-md bg-foreground px-3 py-1.5 text-xs text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-accent px-4 py-1.5 text-xs font-normal text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50"
         >
           Accept
         </button>
@@ -105,14 +104,14 @@ function InboxRow({ request }: { request: PendingRequest }) {
           name="decision"
           value="decline"
           disabled={pending}
-          className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900 disabled:opacity-60"
+          className="rounded-full border border-border-base px-4 py-1.5 text-xs font-normal text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95] disabled:opacity-50"
         >
           Decline
         </button>
       </form>
 
       {state && state.ok === false && state.message && (
-        <p className="basis-full text-xs text-red-600">{state.message}</p>
+        <p className="basis-full text-xs text-danger">{state.message}</p>
       )}
     </li>
   );

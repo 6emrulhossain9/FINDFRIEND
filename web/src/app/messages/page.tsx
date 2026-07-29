@@ -70,13 +70,13 @@ export default async function MessagesPage() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Messages</h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-sm text-text-soft">
             Your direct conversations.
           </p>
         </div>
         <Link
           href="/notifications"
-          className="rounded-md border border-zinc-300 px-4 py-2 text-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+          className="rounded-full border border-border-base px-5 py-2.5 text-sm font-medium text-text-main transition-fast hover:bg-surface-hover active:scale-[0.97]"
         >
           Notifications
         </Link>
@@ -84,7 +84,7 @@ export default async function MessagesPage() {
 
       <div className="mt-6 space-y-3">
         {conversations.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700">
+          <p className="rounded-xl border border-dashed border-border-base p-8 text-center text-sm text-text-tertiary">
             No conversations yet. Open a friend profile and start a chat.
           </p>
         ) : (
@@ -100,18 +100,18 @@ export default async function MessagesPage() {
               <Link
                 key={conversation.id}
                 href={`/messages/${conversation.id}`}
-                className="block rounded-lg border border-zinc-200 bg-white p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                className="block apple-card p-4 transition-fast hover:bg-surface-hover"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <h2 className="font-semibold">
                       {otherProfile?.display_name ?? "Unknown"}
                     </h2>
-                    <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="mt-1 text-sm text-text-soft">
                       {lastMessage?.content ?? "Say hello to start the chat."}
                     </p>
                   </div>
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-text-tertiary">
                     {conversation.last_message_at
                       ? new Date(conversation.last_message_at).toLocaleDateString()
                       : new Date(conversation.created_at).toLocaleDateString()}

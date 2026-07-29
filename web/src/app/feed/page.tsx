@@ -6,6 +6,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { PostComposer } from "./PostComposer";
 import { PostItem } from "./PostItem";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 interface RenderablePost {
   id: string;
@@ -70,11 +71,11 @@ export default async function FeedPage() {
     }));
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8">
+    <AppLayout>
       <div className="mx-auto max-w-2xl space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Feed</h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-sm text-text-soft">
             Posts from everyone on ViCo
           </p>
         </div>
@@ -83,7 +84,7 @@ export default async function FeedPage() {
 
         <div className="space-y-4">
           {filteredPosts.length === 0 ? (
-            <p className="py-12 text-center text-zinc-500">
+            <p className="py-12 text-center text-text-soft">
               No posts yet. Be the first to share!
             </p>
           ) : (
@@ -97,6 +98,6 @@ export default async function FeedPage() {
           )}
         </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }

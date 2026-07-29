@@ -77,10 +77,10 @@ export function OnboardingForm({ interests }: OnboardingFormProps) {
           maxLength={255}
           required
           disabled={pending}
-          className="rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700 disabled:opacity-60"
+          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30 disabled:opacity-60"
         />
         {showFieldErrors("display_name")?.map((e) => (
-          <p key={e} className="text-xs text-red-600">{e}</p>
+          <p key={e} className="text-xs text-danger">{e}</p>
         ))}
       </label>
 
@@ -94,12 +94,12 @@ export function OnboardingForm({ interests }: OnboardingFormProps) {
           rows={3}
           onChange={(e) => setBioLength(e.target.value.length)}
           disabled={pending}
-          className="rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700 resize-none disabled:opacity-60"
+          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30 resize-none disabled:opacity-60"
         />
         {showFieldErrors("bio")?.map((e) => (
-          <p key={e} className="text-xs text-red-600">{e}</p>
+          <p key={e} className="text-xs text-danger">{e}</p>
         ))}
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-text-tertiary">
           {bioLength} / 280
         </p>
       </label>
@@ -107,7 +107,7 @@ export function OnboardingForm({ interests }: OnboardingFormProps) {
       <div className="flex flex-col gap-3 text-sm">
         <div>
           <span className="font-medium">Select at least 5 interests</span>
-          <p className="text-xs text-zinc-500 mt-1">
+          <p className="text-xs text-text-tertiary mt-1">
             These help us match you with people you&apos;ll connect with.
           </p>
         </div>
@@ -119,7 +119,7 @@ export function OnboardingForm({ interests }: OnboardingFormProps) {
         <div className="space-y-4">
           {Object.entries(groupedInterests).map(([category, categoryInterests]) => (
             <div key={category} className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-zinc-600 dark:text-zinc-400">
+              <h3 className="text-xs font-semibold uppercase text-text-soft">
                 {categoryLabels[category] || category}
               </h3>
               <div className="grid grid-cols-2 gap-2">
@@ -133,7 +133,7 @@ export function OnboardingForm({ interests }: OnboardingFormProps) {
                       checked={selectedInterests.has(interest.id)}
                       onChange={() => handleInterestToggle(interest.id)}
                       disabled={pending}
-                      className="rounded border-zinc-300 bg-background dark:border-zinc-700 cursor-pointer disabled:opacity-60"
+                      className="rounded border-border-base bg-surface cursor-pointer disabled:opacity-60 accent-accent"
                     />
                     <span className="text-sm">{interest.label}</span>
                   </label>
@@ -145,13 +145,13 @@ export function OnboardingForm({ interests }: OnboardingFormProps) {
       </div>
 
       {state && state.ok === false && state.message ? (
-        <p className="text-sm text-red-600" role="alert">{state.message}</p>
+        <p className="text-sm text-danger" role="alert">{state.message}</p>
       ) : null}
 
       <button
         type="submit"
         disabled={pending || selectedInterests.size < 5}
-        className="rounded-md bg-foreground px-4 py-2 text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50"
       >
         {pending ? "Setting up…" : `Complete (${selectedInterests.size} selected)`}
       </button>

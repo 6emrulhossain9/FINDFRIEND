@@ -25,10 +25,10 @@ export function LoginForm({ next }: { next?: string }) {
             name="email"
             autoComplete="email"
             required
-            className="rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700"
+            className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
           />
           {showFieldErrors("email")?.map((e) => (
-            <p key={e} className="text-xs text-red-600">{e}</p>
+            <p key={e} className="text-xs text-danger">{e}</p>
           ))}
         </label>
 
@@ -39,36 +39,36 @@ export function LoginForm({ next }: { next?: string }) {
             name="password"
             autoComplete="current-password"
             required
-            className="rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700"
+            className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
           />
           {showFieldErrors("password")?.map((e) => (
-            <p key={e} className="text-xs text-red-600">{e}</p>
+            <p key={e} className="text-xs text-danger">{e}</p>
           ))}
         </label>
 
         {state && state.ok === false && state.message ? (
-          <p className="text-sm text-red-600" role="alert">{state.message}</p>
+          <p className="text-sm text-danger" role="alert">{state.message}</p>
         ) : null}
 
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-foreground px-4 py-2 text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50"
         >
           {pending ? "Signing in…" : "Sign in"}
         </button>
       </form>
 
-      <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-zinc-500">
-        <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+      <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-text-tertiary">
+        <span className="h-px flex-1 bg-separator" />
         or
-        <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+        <span className="h-px flex-1 bg-separator" />
       </div>
 
       <form action={signInWithGoogleAction}>
         <button
           type="submit"
-          className="w-full rounded-md border border-zinc-300 bg-background px-4 py-2 text-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+          className="w-full rounded-full border border-border-base bg-transparent px-5 py-2.5 text-sm font-medium text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
         >
           Continue with Google
         </button>

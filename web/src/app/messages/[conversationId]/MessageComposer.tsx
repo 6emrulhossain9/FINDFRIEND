@@ -13,32 +13,32 @@ export function MessageComposer({ conversationId, action }: MessageComposerProps
   const [state, formAction, pending] = useActionState(action, undefined);
 
   return (
-    <form action={formAction} className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+    <form action={formAction} className="apple-card p-4">
       <input type="hidden" name="conversation_id" value={conversationId} />
-      <textarea
-        name="content"
-        rows={3}
-        maxLength={2000}
-        placeholder="Write a message…"
-        required
-        disabled={pending}
-        className="w-full resize-none rounded-md border border-zinc-300 bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-foreground/30 disabled:opacity-60 dark:border-zinc-700"
-      />
-      {state && state.ok === false && state.errors?.content && (
-        <p className="mt-2 text-xs text-red-600">{state.errors.content.join(", ")}</p>
-      )}
-      {state && state.ok === false && state.message && (
-        <p className="mt-2 text-xs text-red-600">{state.message}</p>
-      )}
-      <div className="mt-3 flex justify-end">
+      <div className="flex gap-3 items-end">
+        <textarea
+          name="content"
+          rows={2}
+          maxLength={2000}
+          placeholder="iMessage"
+          required
+          disabled={pending}
+          className="flex-1 resize-none rounded-xl border border-border-base bg-surface px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-accent/30 disabled:opacity-60 placeholder:text-text-soft"
+        />
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-foreground px-4 py-2 text-sm text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50 shrink-0"
         >
-          {pending ? "Sending…" : "Send"}
+          {pending ? "…" : "Send"}
         </button>
       </div>
+      {state && state.ok === false && state.errors?.content && (
+        <p className="mt-2 text-xs text-danger">{state.errors.content.join(", ")}</p>
+      )}
+      {state && state.ok === false && state.message && (
+        <p className="mt-2 text-xs text-danger">{state.message}</p>
+      )}
     </form>
   );
 }

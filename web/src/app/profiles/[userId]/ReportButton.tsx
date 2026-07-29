@@ -1,5 +1,4 @@
-// ReportButton — opens a small dialog to collect a reason + description,
-// then submits to the `reportUser` server action.
+// ReportButton — Apple-style dialog to collect a reason + description
 
 "use client";
 
@@ -28,7 +27,6 @@ export function ReportButton({ targetUserId }: ReportButtonProps) {
   );
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  // Close the dialog on success; surface server errors inline.
   useEffect(() => {
     if (state && state.ok === true && dialogRef.current?.open) {
       dialogRef.current.close();
@@ -40,17 +38,17 @@ export function ReportButton({ targetUserId }: ReportButtonProps) {
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className="w-full rounded-md border border-zinc-300 px-4 py-2 text-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+        className="w-full rounded-full border border-border-base px-5 py-2.5 text-sm font-medium text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
       >
         Report
       </button>
 
       <dialog
         ref={dialogRef}
-        className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-6 backdrop:bg-black/50 dark:border-zinc-700 dark:bg-zinc-900"
+        className="w-full max-w-md rounded-xl border-0 bg-surface-card p-6 shadow-dropdown backdrop:bg-black/40 dark:border-0"
       >
-        <h2 className="text-lg font-semibold">Report this user</h2>
-        <p className="mt-1 text-xs text-zinc-500">
+        <h2 className="text-lg font-semibold text-text-main">Report this user</h2>
+        <p className="mt-1 text-xs text-text-soft">
           Reports are reviewed by the team. We never tell the user who reported
           them.
         </p>
@@ -59,66 +57,64 @@ export function ReportButton({ targetUserId }: ReportButtonProps) {
           <input type="hidden" name="reported_user_id" value={targetUserId} />
 
           <fieldset className="flex flex-col gap-2">
-            <legend className="font-medium">Reason</legend>
+            <legend className="font-medium text-text-main">Reason</legend>
             {REASONS.map((r) => (
-              <label key={r.value} className="flex items-center gap-2">
+              <label key={r.value} className="flex items-center gap-2 text-text-main">
                 <input
                   type="radio"
                   name="reason"
                   value={r.value}
                   required
                   disabled={pending}
-                  className="border-zinc-300"
+                  className="border-border-base text-accent accent-accent"
                 />
                 <span>{r.label}</span>
               </label>
             ))}
             {state && state.ok === false && state.errors?.reason && (
-              <p className="text-xs text-red-600">
+              <p className="text-xs text-danger">
                 {state.errors.reason.join(", ")}
               </p>
             )}
           </fieldset>
 
           <label className="flex flex-col gap-1">
-            <span className="font-medium">What happened? (optional)</span>
+            <span className="font-medium text-text-main">What happened? (optional)</span>
             <textarea
               name="description"
               rows={4}
               maxLength={1000}
               placeholder="Share any context that helps our team review this."
               disabled={pending}
-              className="resize-none rounded-md border border-zinc-300 bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-foreground/30 dark:border-zinc-700"
+              className="resize-none rounded-xl border border-border-base bg-surface px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-accent/30 disabled:opacity-60 placeholder:text-text-soft"
             />
             {state && state.ok === false && state.errors?.description && (
-              <p className="text-xs text-red-600">
+              <p className="text-xs text-danger">
                 {state.errors.description.join(", ")}
               </p>
             )}
           </label>
 
           {state && state.ok === false && state.message && (
-            <p className="text-xs text-red-600">{state.message}</p>
+            <p className="text-xs text-danger">{state.message}</p>
           )}
           {state && state.ok === true && (
-            <p className="text-xs text-green-600">
-              Report submitted. Thank you.
-            </p>
+            <p className="text-xs text-success">Report submitted. Thank you.</p>
           )}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={() => dialogRef.current?.close()}
               disabled={pending}
-              className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700"
+              className="rounded-full border border-border-base px-5 py-2.5 text-sm font-medium text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={pending}
-              className="rounded-md bg-foreground px-3 py-2 text-sm text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50"
             >
               {pending ? "Submitting…" : "Submit report"}
             </button>

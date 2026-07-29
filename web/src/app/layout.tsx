@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -19,6 +12,13 @@ export const metadata: Metadata = {
   },
   description:
     "A global friend-making social network. Meet people your age who share your interests.",
+  openGraph: {
+    title: "ViCo — Make friends around the world",
+    description:
+      "A global friend-making social network. Meet people your age who share your interests.",
+    siteName: "ViCo",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -27,11 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+    <html lang="en" className="h-full antialiased">
+      <body className="min-h-full flex flex-col bg-surface text-text-main">
         {children}
       </body>
     </html>

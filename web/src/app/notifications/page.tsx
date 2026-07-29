@@ -48,14 +48,14 @@ export default async function NotificationsPage() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Notifications</h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-sm text-text-soft">
             Recent activity across your conversations and friendships.
           </p>
         </div>
         <form action={markNotificationsReadAction}>
           <button
             type="submit"
-            className="rounded-md border border-zinc-300 px-4 py-2 text-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+            className="rounded-full border border-border-base px-5 py-2.5 text-sm font-medium text-text-main transition-fast hover:bg-surface-hover active:scale-[0.97]"
           >
             Mark all read
           </button>
@@ -64,7 +64,7 @@ export default async function NotificationsPage() {
 
       <div className="mt-6 space-y-3">
         {notifications.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700">
+          <p className="rounded-xl border border-dashed border-border-base p-8 text-center text-sm text-text-tertiary">
             Nothing yet.
           </p>
         ) : (
@@ -85,21 +85,21 @@ export default async function NotificationsPage() {
               <Link
                 key={notification.id}
                 href={href}
-                className={`block rounded-lg border p-4 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800 ${
+                className={`block rounded-xl border p-4 transition-fast hover:bg-surface-hover ${
                   notification.read_at
-                    ? "border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900"
-                    : "border-foreground bg-zinc-50 dark:border-zinc-500 dark:bg-zinc-800/80"
+                    ? "border-border-base bg-surface-card"
+                    : "border-accent/30 bg-surface-hover"
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold">{label}</p>
-                    <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="mt-1 text-sm text-text-soft">
                       {actor?.display_name ?? "Someone"}
                       {notification.kind === "message" ? " sent you a message." : "."}
                     </p>
                   </div>
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-text-tertiary">
                     {new Date(notification.created_at).toLocaleDateString()}
                   </span>
                 </div>

@@ -21,17 +21,17 @@ export function CommentItem({ comment }: CommentProps) {
   });
 
   return (
-    <li className="rounded-md border border-zinc-200 bg-white p-3 text-sm dark:border-zinc-700 dark:bg-zinc-900">
+    <li className="rounded-xl bg-surface-hover p-4 text-sm animate-fade-in">
       <div className="mb-1 flex items-center gap-2">
         <Link
           href={`/profiles/${comment.author_id}`}
-          className="font-medium hover:underline"
+          className="font-medium text-sm text-text-main hover:text-accent transition-fast"
         >
           {comment.profiles?.display_name ?? "Unknown"}
         </Link>
-        <span className="text-xs text-zinc-500">{date}</span>
+        <span className="text-xs text-text-tertiary">{date}</span>
       </div>
-      <p className="whitespace-pre-wrap">{comment.content}</p>
+      <p className="whitespace-pre-wrap text-text-main leading-relaxed">{comment.content}</p>
     </li>
   );
 }

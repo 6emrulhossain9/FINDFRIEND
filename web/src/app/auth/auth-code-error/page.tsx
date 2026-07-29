@@ -17,13 +17,13 @@ export default async function AuthCodeErrorPage({
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center gap-4 px-6 text-center">
       <h1 className="text-2xl font-semibold">Sign-in didn&apos;t complete</h1>
-      <p className="text-zinc-600 dark:text-zinc-400">
+      <p className="text-text-soft">
         The link may have expired or been used already. Please try signing in
         again.
       </p>
       <Link
         href="/login"
-        className="mx-auto rounded-full bg-foreground px-5 py-2 text-background transition-colors hover:opacity-90"
+        className="mx-auto rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95]"
       >
         Back to sign in
       </Link>
