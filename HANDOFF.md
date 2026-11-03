@@ -1,6 +1,6 @@
 # Friendnet project handoff
 
-**Last updated:** 2026-11-04 01:07:35 Asia/Dhaka  
+**Last updated:** 2026-11-04 01:10:36 Asia/Dhaka  
 **Purpose:** Give a new ChatGPT/Codex account the current project context and the rules for continuing work safely.
 
 > Start each new project chat by opening this file and `AGENTS.md`. Keep this handoff current after every code, database, configuration, or deployment change.
@@ -14,8 +14,8 @@
 - **Web app:** Next.js 16, React 19, TypeScript, Tailwind CSS, Supabase Auth/Postgres.
 - **Vercel project:** `findfriend` (`prj_PYy4TSC73wJrDD7ezyGwZU7XAQvH`), app root is `web`.
 - **Supabase project:** `kutlxzwzunrarqcppjnf`.
-- **Latest production commit:** `0a51a79` — “Make birthday selection easier during signup.”
-- **Latest verified production deployment:** `dpl_GKYW6dW4kYWLsGffsSxf4Mn2Y5oE`, status `READY`, alias `findfriend-seven.vercel.app`.
+- **Latest production commit:** `31de344` — “Add persistent Friendnet AI handoff instructions.” This adds project guidance; the latest product-code change is commit `0a51a79`.
+- **Latest verified production deployment:** `dpl_aB87X5jyGD12479W6KxgdE7VKZen`, status `READY`, alias `findfriend-seven.vercel.app`.
 
 Project IDs and public URLs above identify resources; they are not credentials.
 
@@ -69,8 +69,8 @@ Project IDs and public URLs above identify resources; they are not credentials.
 
 - **Live URL:** https://findfriend-seven.vercel.app
 - **Source:** GitHub `main` → Vercel project `findfriend` → production domain.
-- **Latest deployed commit:** `0a51a79b1a7d292456d474d87c216f7ac80fd783`.
-- **Latest deployment:** `dpl_GKYW6dW4kYWLsGffsSxf4Mn2Y5oE` (`READY`).
+- **Latest deployed commit:** `31de344db12f5f65edfbb128829ae9800fa7b4af`.
+- **Latest deployment:** `dpl_aB87X5jyGD12479W6KxgdE7VKZen` (`READY`).
 - Verify the resulting Vercel deployment is `READY` and check the affected live page after a production push.
 
 ## Important local-checkout warning
@@ -79,11 +79,12 @@ The desktop workspace at `D:\friendnet-phase0\friendnet\FINDFRIEND-source` was b
 
 ## Change log
 
-### 2026-11-04 01:07:35 Asia/Dhaka — handoff created
+### 2026-11-04 01:07:35 Asia/Dhaka — handoff created and published
 
 - Added this project handoff and the root `AGENTS.md` rule requiring contributors to read/update it.
 - Captured the deployed Friendnet state, service identifiers (not credentials), development safeguards, known verification limits, and the stale local-checkout warning.
 - Checks: documentation-only change; no app checks run yet. (The latest app lint, TypeScript, and Vercel build checks are listed above.)
-- Deployment: pending; publish this handoff to the repository so another account can access it.
+- Published to GitHub `main` in commit `31de344db12f5f65edfbb128829ae9800fa7b4af`; Vercel deployment `dpl_aB87X5jyGD12479W6KxgdE7VKZen` completed with `READY` status.
+- Checks: latest production build succeeded; `HANDOFF.md` and `AGENTS.md` are present in the repository root.
 
 <!-- Future contributors: append new entries below; keep older entries for context. -->
