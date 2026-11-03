@@ -1,6 +1,6 @@
 # Friendnet project handoff
 
-**Last updated:** 2026-11-04 01:10:36 Asia/Dhaka  
+**Last updated:** 2026-11-04 01:12:28 Asia/Dhaka  
 **Purpose:** Give a new ChatGPT/Codex account the current project context and the rules for continuing work safely.
 
 > Start each new project chat by opening this file and `AGENTS.md`. Keep this handoff current after every code, database, configuration, or deployment change.
@@ -14,8 +14,8 @@
 - **Web app:** Next.js 16, React 19, TypeScript, Tailwind CSS, Supabase Auth/Postgres.
 - **Vercel project:** `findfriend` (`prj_PYy4TSC73wJrDD7ezyGwZU7XAQvH`), app root is `web`.
 - **Supabase project:** `kutlxzwzunrarqcppjnf`.
-- **Latest production commit:** `31de344` — “Add persistent Friendnet AI handoff instructions.” This adds project guidance; the latest product-code change is commit `0a51a79`.
-- **Latest verified production deployment:** `dpl_aB87X5jyGD12479W6KxgdE7VKZen`, status `READY`, alias `findfriend-seven.vercel.app`.
+- **Latest product-code release:** `0a51a79` — “Make birthday selection easier during signup.”
+- **Latest verified deployment containing that product release:** `dpl_GKYW6dW4kYWLsGffsSxf4Mn2Y5oE`, status `READY`, alias `findfriend-seven.vercel.app`. Later `main` updates only changed handoff documentation; Vercel automatically rebuilds `main`.
 
 Project IDs and public URLs above identify resources; they are not credentials.
 
@@ -69,8 +69,8 @@ Project IDs and public URLs above identify resources; they are not credentials.
 
 - **Live URL:** https://findfriend-seven.vercel.app
 - **Source:** GitHub `main` → Vercel project `findfriend` → production domain.
-- **Latest deployed commit:** `31de344db12f5f65edfbb128829ae9800fa7b4af`.
-- **Latest deployment:** `dpl_aB87X5jyGD12479W6KxgdE7VKZen` (`READY`).
+- **Latest deployed product-code commit:** `0a51a79b1a7d292456d474d87c216f7ac80fd783`.
+- **Deployment containing that product-code update:** `dpl_GKYW6dW4kYWLsGffsSxf4Mn2Y5oE` (`READY`).
 - Verify the resulting Vercel deployment is `READY` and check the affected live page after a production push.
 
 ## Important local-checkout warning
@@ -86,5 +86,12 @@ The desktop workspace at `D:\friendnet-phase0\friendnet\FINDFRIEND-source` was b
 - Checks: documentation-only change; no app checks run yet. (The latest app lint, TypeScript, and Vercel build checks are listed above.)
 - Published to GitHub `main` in commit `31de344db12f5f65edfbb128829ae9800fa7b4af`; Vercel deployment `dpl_aB87X5jyGD12479W6KxgdE7VKZen` completed with `READY` status.
 - Checks: latest production build succeeded; `HANDOFF.md` and `AGENTS.md` are present in the repository root.
+
+### 2026-11-04 01:12:28 Asia/Dhaka — handoff published and deployment baseline clarified
+
+- Published `HANDOFF.md` and repository-level `AGENTS.md` to GitHub `main`; the handoff is now available to a new ChatGPT account from the repository.
+- Clarified that the latest product-code release is `0a51a79`; later commits only updated handoff documentation. The production deployment containing the app change is `dpl_GKYW6dW4kYWLsGffsSxf4Mn2Y5oE` (`READY`).
+- Checks: documentation reviewed; latest app lint and TypeScript checks passed, and Vercel built the application successfully.
+- Vercel automatically builds documentation commits on `main`; check the Vercel project for the current deployment state after each push.
 
 <!-- Future contributors: append new entries below; keep older entries for context. -->
