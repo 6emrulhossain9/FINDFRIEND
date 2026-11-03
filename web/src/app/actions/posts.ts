@@ -40,6 +40,22 @@ export async function createPostAction(
   });
 
   if (error) {
+    // The post table requires a matching profile row. This most often means
+    // onboarding did not finish after email confirmation.
+    console.error("Create post failed", { code: error.code });
+    if (error.code === "23503") {
+      return {
+        ok: false,
+        message: "Finish setting up your profile before sharing a post.",
+        recoveryHref: "/onboarding",
+      };
+    }
+    if (error.code === "42501") {
+      return {
+        ok: false,
+        message: "Your sign-in needs a refresh. Sign out and sign in again, then retry.",
+      };
+    }
     return { ok: false, message: "Could not create post." };
   }
 
@@ -112,17 +128,19 @@ export async function toggleReactionAction(
 
     if (existing) {
       // Delete reaction (toggle off)
-      await supabase
+      const { error } = await supabase
         .from("post_reactions")
         .delete()
         .eq("id", existing.id);
+      if (error) return { ok: false, message: "Could not remove your reaction." };
     } else {
       // Add reaction
-      await supabase.from("post_reactions").insert({
+      const { error } = await supabase.from("post_reactions").insert({
         post_id,
         user_id: session.user.id,
         reaction_type,
       });
+      if (error) return { ok: false, message: "Could not add your reaction." };
     }
 
     revalidatePath("/feed");
@@ -130,6 +148,12 @@ export async function toggleReactionAction(
   }
 
   if (comment_id) {
+    const { data: comment } = await supabase
+      .from("comments")
+      .select("post_id")
+      .eq("id", comment_id)
+      .single();
+
     // Same logic for comments
     const { data: existing } = await supabase
       .from("comment_reactions")
@@ -140,18 +164,21 @@ export async function toggleReactionAction(
       .single();
 
     if (existing) {
-      await supabase
+      const { error } = await supabase
         .from("comment_reactions")
         .delete()
         .eq("id", existing.id);
+      if (error) return { ok: false, message: "Could not remove your reaction." };
     } else {
-      await supabase.from("comment_reactions").insert({
+      const { error } = await supabase.from("comment_reactions").insert({
         comment_id,
         user_id: session.user.id,
         reaction_type,
       });
+      if (error) return { ok: false, message: "Could not add your reaction." };
     }
 
+    if (comment?.post_id) revalidatePath(`/post/${comment.post_id}`);
     return { ok: true };
   }
 

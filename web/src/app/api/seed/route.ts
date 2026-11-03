@@ -9,7 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const DEMO_USERS = [
   {
-    email: "alex@vico.demo",
+    email: "alex@friendnet.demo",
     password: "DemoPass123!",
     display_name: "Alex Morgan",
     date_of_birth: "1997-05-12",
@@ -19,7 +19,7 @@ const DEMO_USERS = [
     onboarding_state: "active",
   },
   {
-    email: "sarah@vico.demo",
+    email: "sarah@friendnet.demo",
     password: "DemoPass123!",
     display_name: "Sarah Chen",
     date_of_birth: "2001-11-03",
@@ -29,7 +29,7 @@ const DEMO_USERS = [
     onboarding_state: "active",
   },
   {
-    email: "jordan@vico.demo",
+    email: "jordan@friendnet.demo",
     password: "DemoPass123!",
     display_name: "Jordan Rivera",
     date_of_birth: "2003-07-28",
@@ -39,7 +39,7 @@ const DEMO_USERS = [
     onboarding_state: "active",
   },
   {
-    email: "maya@vico.demo",
+    email: "maya@friendnet.demo",
     password: "DemoPass123!",
     display_name: "Maya Patel",
     date_of_birth: "1998-02-19",
@@ -49,7 +49,7 @@ const DEMO_USERS = [
     onboarding_state: "active",
   },
   {
-    email: "taylor@vico.demo",
+    email: "taylor@friendnet.demo",
     password: "DemoPass123!",
     display_name: "Taylor Kim",
     date_of_birth: "2006-09-15",
@@ -444,7 +444,7 @@ export async function GET() {
       success: true,
       message: "✅ Demo data seeded successfully!",
       details: results,
-      users: DEMO_USERS.map((u, i) => ({
+      users: DEMO_USERS.map((u) => ({
         email: u.email,
         password: "DemoPass123!",
         display_name: u.display_name,

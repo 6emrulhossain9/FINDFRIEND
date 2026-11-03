@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { verifySession } from "@/lib/dal";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { ConversationThread } from "./ConversationThread";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 interface PageProps {
   params: Promise<{ conversationId: string }>;
@@ -76,7 +77,8 @@ export default async function ConversationPage({ params }: PageProps) {
   const otherProfile = profileData as ProfileRow | null;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
+    <AppLayout>
+    <main className="mx-auto max-w-3xl py-4">
       <Link
         href="/messages"
         className="mb-4 inline-block text-sm text-text-tertiary hover:text-accent transition-fast"
@@ -100,5 +102,6 @@ export default async function ConversationPage({ params }: PageProps) {
         initialMessages={messages}
       />
     </main>
+    </AppLayout>
   );
 }

@@ -1,159 +1,79 @@
 "use client";
 
-import { useActionState, useRef } from "react";
-import { useState } from "react";
-
+import { useActionState, useState } from "react";
 import { onboardingAction } from "@/app/actions/onboarding";
 import type { OnboardingFormState } from "@/lib/validation/auth";
 
 const initialState: OnboardingFormState = undefined;
+interface Interest { id: string; slug: string; label: string; category: string; }
 
-interface Interest {
-  id: string;
-  slug: string;
-  label: string;
-  category: string;
-}
-
-interface OnboardingFormProps {
+export function OnboardingForm({
+  interests,
+  initialProfile,
+  initialInterestIds,
+}: {
   interests: Interest[];
-}
-
-export function OnboardingForm({ interests }: OnboardingFormProps) {
+  initialProfile: { display_name: string; bio: string };
+  initialInterestIds: string[];
+}) {
   const [state, formAction, pending] = useActionState(onboardingAction, initialState);
-  const [selectedInterests, setSelectedInterests] = useState<Set<string>>(new Set());
-  const bioRef = useRef<HTMLTextAreaElement>(null);
-  const [bioLength, setBioLength] = useState(0);
-
-  const showFieldErrors = (f: "display_name" | "bio" | "interests") =>
-    state && state.ok === false ? state.errors?.[f] : undefined;
-
-  const handleInterestToggle = (interestId: string) => {
-    const newSelected = new Set(selectedInterests);
-    if (newSelected.has(interestId)) {
-      newSelected.delete(interestId);
-    } else {
-      newSelected.add(interestId);
-    }
-    setSelectedInterests(newSelected);
-  };
-
-  const groupedInterests = interests.reduce(
-    (acc, interest) => {
-      if (!acc[interest.category]) {
-        acc[interest.category] = [];
-      }
-      acc[interest.category].push(interest);
-      return acc;
-    },
-    {} as Record<string, Interest[]>
-  );
-
+  const [selectedInterests, setSelectedInterests] = useState<Set<string>>(() => new Set(initialInterestIds));
+  const [bioLength, setBioLength] = useState(initialProfile.bio.length);
+  const fieldErrors = (field: "display_name" | "bio" | "interests") => state?.ok === false ? state.errors?.[field] : undefined;
+  const categories = interests.reduce<Record<string, Interest[]>>((result, interest) => {
+    (result[interest.category] ??= []).push(interest);
+    return result;
+  }, {});
   const categoryLabels: Record<string, string> = {
-    creative: "Creative",
-    outdoors: "Outdoors",
-    food: "Food & Drink",
-    games: "Games & Tech",
-    learn: "Learn & Culture",
-    lifestyle: "Lifestyle",
-    music: "Music",
-    sports: "Sports",
+    creative: "Creative", outdoors: "Outdoors", food: "Food & drink", games: "Games & tech",
+    learn: "Learning & culture", lifestyle: "Lifestyle", music: "Music", sports: "Sports",
   };
-
-  const handleFormAction = async (formData: FormData) => {
-    // Add selected interests to form data before submitting
+  const submit = async (formData: FormData) => {
     formData.set("interests", JSON.stringify(Array.from(selectedInterests)));
     return formAction(formData);
   };
 
   return (
-    <form action={handleFormAction} className="flex flex-col gap-6">
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Display Name</span>
-        <input
-          type="text"
-          name="display_name"
-          placeholder="e.g., Alex, Morgan, Jamie"
-          maxLength={255}
-          required
-          disabled={pending}
-          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30 disabled:opacity-60"
-        />
-        {showFieldErrors("display_name")?.map((e) => (
-          <p key={e} className="text-xs text-danger">{e}</p>
-        ))}
+    <form action={submit} className="apple-card flex flex-col gap-6 p-5 sm:p-7">
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
+        Display name
+        <input type="text" name="display_name" defaultValue={initialProfile.display_name} placeholder="What should friends call you?" maxLength={255} required disabled={pending} className="min-h-11 rounded-xl border border-border-base bg-surface px-4 py-2.5 font-normal outline-none transition-fast focus:border-accent focus:ring-2 focus:ring-accent/15 disabled:opacity-60" />
+        {fieldErrors("display_name")?.map((error) => <span key={error} className="text-xs font-normal text-danger" role="alert">{error}</span>)}
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Bio (optional)</span>
-        <textarea
-          ref={bioRef}
-          name="bio"
-          placeholder="Tell us about yourself"
-          maxLength={280}
-          rows={3}
-          onChange={(e) => setBioLength(e.target.value.length)}
-          disabled={pending}
-          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30 resize-none disabled:opacity-60"
-        />
-        {showFieldErrors("bio")?.map((e) => (
-          <p key={e} className="text-xs text-danger">{e}</p>
-        ))}
-        <p className="text-xs text-text-tertiary">
-          {bioLength} / 280
-        </p>
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
+        A little about you <span className="font-normal text-text-tertiary">Optional</span>
+        <textarea name="bio" defaultValue={initialProfile.bio} placeholder="What do you enjoy talking about?" maxLength={280} rows={3} onChange={(event) => setBioLength(event.target.value.length)} disabled={pending} className="min-h-24 resize-y rounded-xl border border-border-base bg-surface px-4 py-2.5 font-normal outline-none transition-fast focus:border-accent focus:ring-2 focus:ring-accent/15 disabled:opacity-60" />
+        {fieldErrors("bio")?.map((error) => <span key={error} className="text-xs font-normal text-danger" role="alert">{error}</span>)}
+        <span className="text-right text-xs font-normal text-text-tertiary" aria-live="polite">{bioLength} / 280</span>
       </label>
 
-      <div className="flex flex-col gap-3 text-sm">
-        <div>
-          <span className="font-medium">Select at least 5 interests</span>
-          <p className="text-xs text-text-tertiary mt-1">
-            These help us match you with people you&apos;ll connect with.
-          </p>
-        </div>
-
-        {showFieldErrors("interests")?.map((e) => (
-          <p key={e} className="text-xs text-red-600">{e}</p>
-        ))}
-
-        <div className="space-y-4">
-          {Object.entries(groupedInterests).map(([category, categoryInterests]) => (
-            <div key={category} className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-text-soft">
-                {categoryLabels[category] || category}
-              </h3>
-              <div className="grid grid-cols-2 gap-2">
-                {categoryInterests.map((interest) => (
-                  <label
-                    key={interest.id}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedInterests.has(interest.id)}
-                      onChange={() => handleInterestToggle(interest.id)}
-                      disabled={pending}
-                      className="rounded border-border-base bg-surface cursor-pointer disabled:opacity-60 accent-accent"
-                    />
-                    <span className="text-sm">{interest.label}</span>
-                  </label>
-                ))}
-              </div>
+      <fieldset className="min-w-0">
+        <legend className="text-sm font-semibold">What do you enjoy?</legend>
+        <p className="mt-1 text-xs leading-5 text-text-soft">Choose at least 5 and up to 20 interests. Shared interests make first hellos easier.</p>
+        <p className="mt-2 text-xs font-medium text-accent" aria-live="polite">{selectedInterests.size} selected</p>
+        {fieldErrors("interests")?.map((error) => <p key={error} className="mt-2 text-sm text-danger" role="alert">{error}</p>)}
+        <div className="mt-4 space-y-5">
+          {Object.entries(categories).map(([category, items]) => <section key={category} aria-label={categoryLabels[category] ?? category}>
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-text-tertiary">{categoryLabels[category] ?? category}</h2>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {items.map((interest) => <label key={interest.id} className="flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-border-base bg-surface-card px-3 transition-fast hover:bg-surface-hover has-[:checked]:border-accent/50 has-[:checked]:bg-success-light/80">
+                <input type="checkbox" checked={selectedInterests.has(interest.id)} onChange={() => setSelectedInterests((previous) => {
+                  const next = new Set(previous);
+                  if (next.has(interest.id)) next.delete(interest.id);
+                  else if (next.size < 20) next.add(interest.id);
+                  return next;
+                })} disabled={pending} className="h-4 w-4 shrink-0 accent-accent disabled:opacity-60" />
+                <span className="text-sm font-medium">{interest.label}</span>
+              </label>)}
             </div>
-          ))}
+          </section>)}
         </div>
-      </div>
+      </fieldset>
 
-      {state && state.ok === false && state.message ? (
-        <p className="text-sm text-danger" role="alert">{state.message}</p>
-      ) : null}
-
-      <button
-        type="submit"
-        disabled={pending || selectedInterests.size < 5}
-        className="rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50"
-      >
-        {pending ? "Setting up…" : `Complete (${selectedInterests.size} selected)`}
+      {state?.ok === false && state.message ? <p className="text-sm text-danger" role="alert">{state.message}</p> : null}
+      <button type="submit" disabled={pending || selectedInterests.size < 5} className="min-h-11 w-full rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
+        {pending ? "Saving your profile…" : "Finish setting up"}
       </button>
     </form>
   );

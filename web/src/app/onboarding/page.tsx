@@ -15,35 +15,41 @@ export default async function OnboardingPage() {
     redirect("/login?next=/onboarding");
   }
 
-  // Fetch interests from the database
   const supabase = await createServerSupabase();
-  const { data: interests, error } = await supabase
-    .from("interests")
-    .select("id, slug, label, category")
-    .order("category")
-    .order("label");
+  const [interestsResult, profileResult, selectedInterestsResult] = await Promise.all([
+    supabase.from("interests").select("id, slug, label, category").order("category").order("label"),
+    supabase.from("profiles").select("display_name, bio, onboarding_state").eq("id", session.user.id).maybeSingle(),
+    supabase.from("user_interests").select("interest_id").eq("user_id", session.user.id),
+  ]);
+  const { data: interests, error } = interestsResult;
 
-  if (error || !interests?.length) {
+  if (error || profileResult.error || selectedInterestsResult.error || !interests?.length) {
     return (
-      <div className="min-h-screen bg-surface px-4 py-8">
-        <div className="mx-auto max-w-md">
-          <p className="text-danger">Could not load interests. Please try again later.</p>
+      <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5">
+        <div className="apple-card p-6 text-center">
+          <h1 className="text-lg font-semibold">Your profile is almost ready</h1>
+          <p className="mt-2 text-sm leading-6 text-text-soft" role="status">We couldn’t load your setup details just now. Refresh this page to try again.</p>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface px-4 py-8">
-      <div className="mx-auto max-w-md">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Welcome to ViCo</h1>
-          <p className="mt-2 text-sm text-text-soft">
-            Complete your profile to get started. We&apos;ll match you with people who share your interests.
+    <main className="min-h-screen px-4 py-10 sm:py-16">
+      <div className="mx-auto max-w-2xl">
+        <div className="mb-8 max-w-xl">
+          <p className="text-sm font-semibold text-accent">{profileResult.data?.onboarding_state === "active" ? "Your profile" : "A few little details"}</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight">{profileResult.data?.onboarding_state === "active" ? "Make it your own" : "Make yourself at home"}</h1>
+          <p className="mt-3 text-sm leading-6 text-text-soft">
+            Choose a name and a few interests. We’ll use them to help you meet people you’ll enjoy talking with.
           </p>
         </div>
-        <OnboardingForm interests={interests} />
+        <OnboardingForm
+          interests={interests}
+          initialProfile={{ display_name: profileResult.data?.display_name ?? "", bio: profileResult.data?.bio ?? "" }}
+          initialInterestIds={(selectedInterestsResult.data ?? []).map((row) => row.interest_id)}
+        />
       </div>
-    </div>
+    </main>
   );
 }

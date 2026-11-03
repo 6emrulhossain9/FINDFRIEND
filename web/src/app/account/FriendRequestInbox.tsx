@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState } from "react";
 
 import { respondToFriendRequest } from "@/app/actions/social";
 import type { SocialFormState } from "@/lib/validation/social";
@@ -54,13 +54,7 @@ function InboxRow({ request }: { request: PendingRequest }) {
     respondToFriendRequest,
     undefined,
   );
-  const [exiting, setExiting] = useState(false);
-
-  useEffect(() => {
-    if (state && state.ok === true) {
-      setExiting(true);
-    }
-  }, [state]);
+  const exiting = state?.ok === true;
 
   return (
     <li

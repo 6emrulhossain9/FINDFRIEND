@@ -48,11 +48,6 @@ export function Modal({
     };
   }, [open, handleKeyDown]);
 
-  // Reset closing state when re-opened
-  useEffect(() => {
-    if (open) setClosing(false);
-  }, [open]);
-
   if (!open && !closing) return null;
 
   const show = open && !closing;

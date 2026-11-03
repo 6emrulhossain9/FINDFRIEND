@@ -35,22 +35,24 @@ export const SignupSchema = z.object({
     .regex(/[0-9]/, { error: "Include at least one number." }),
   date_of_birth: z
     .string()
-    .refine((val) => {
-      const date = new Date(val);
-      return !isNaN(date.getTime());
+    .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Please enter a valid date." })
+    .refine((value) => {
+      const [year, month, day] = value.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+      return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
     }, { error: "Please enter a valid date." })
-    .refine((val) => {
-      const date = new Date(val);
-      return isAtLeast13YearsOld(date);
+    .refine((value) => {
+      const [year, month, day] = value.split("-").map(Number);
+      return isAtLeast13YearsOld(new Date(year, month - 1, day));
     }, { error: "You must be at least 13 years old to sign up." }),
 });
 
 export const OnboardingSchema = z.object({
   display_name: z
     .string()
+    .trim()
     .min(1, { error: "Enter your display name." })
-    .max(255, { error: "Display name is too long." })
-    .trim(),
+    .max(255, { error: "Display name is too long." }),
   bio: z
     .string()
     .max(280, { error: "Bio is too long." })
@@ -60,7 +62,10 @@ export const OnboardingSchema = z.object({
   interests: z
     .array(z.string().uuid({ error: "Invalid interest ID." }))
     .min(5, { error: "Select at least 5 interests." })
-    .max(20, { error: "Select up to 20 interests." }),
+    .max(20, { error: "Select up to 20 interests." })
+    .refine((interests) => new Set(interests).size === interests.length, {
+      error: "Choose each interest only once.",
+    }),
 });
 
 export type AuthFormState =

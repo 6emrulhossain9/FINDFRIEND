@@ -11,14 +11,18 @@
 // small client component (DiscoverCard) that uses `useActionState`.
 
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import type { Metadata } from "next";
 
 import { verifySession } from "@/lib/dal";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { jaccard } from "@/lib/matching";
 
 import { DiscoverCard } from "./DiscoverCard";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 export const dynamic = "force-dynamic"; // auth + RLS — never cache
+export const metadata: Metadata = { title: "Discover friends" };
 
 export default async function DiscoverPage() {
   const session = await verifySession();
@@ -35,14 +39,16 @@ export default async function DiscoverPage() {
     .eq("user_id", session.user.id);
   const myInterestIds = (myInterests ?? []).map((i) => i.interest_id);
 
-  // 2. Profiles to exclude: self, already-friended, already-requested,
+  // 2. Profiles to exclude: self, already-friended, either pending request,
   //    blocked (in either direction). We do this with a few narrow
   //    queries rather than one giant OR.
   const [
     { data: friendships },
     { data: outboundRequests },
+    { data: inboundRequests },
     { data: myBlocks },
     { data: blockedBy },
+    { data: mutedUsers },
   ] = await Promise.all([
     supabase
       .from("friendships")
@@ -54,8 +60,14 @@ export default async function DiscoverPage() {
       .select("receiver_id")
       .eq("requester_id", session.user.id)
       .eq("status", "pending"),
+    supabase
+      .from("friendships")
+      .select("requester_id")
+      .eq("receiver_id", session.user.id)
+      .eq("status", "pending"),
     supabase.from("blocks").select("blocked_user_id").eq("user_id", session.user.id),
     supabase.from("blocks").select("user_id").eq("blocked_user_id", session.user.id),
+    supabase.from("mutes").select("muted_user_id").eq("user_id", session.user.id),
   ]);
 
   const excludedIds = new Set<string>([session.user.id]);
@@ -64,14 +76,16 @@ export default async function DiscoverPage() {
     excludedIds.add(f.receiver_id);
   }
   for (const r of outboundRequests ?? []) excludedIds.add(r.receiver_id);
+  for (const r of inboundRequests ?? []) excludedIds.add(r.requester_id);
   for (const b of myBlocks ?? []) excludedIds.add(b.blocked_user_id);
   for (const b of blockedBy ?? []) excludedIds.add(b.user_id);
+  for (const m of mutedUsers ?? []) excludedIds.add(m.muted_user_id);
 
   // 3. Fetch candidate profiles. We pull a small batch of the most
   //    recently active users, then re-rank by Jaccard in app code.
   //    This is fine for the free tier up to a few thousand users; if
   //    it ever becomes hot we'll move ranking to a SQL function.
-  const { data: candidates } = await supabase
+  const { data: candidates, error: candidatesError } = await supabase
     .from("profiles_public")
     .select("id, display_name, age_bracket, bio, avatar_url, created_at")
     .order("created_at", { ascending: false })
@@ -83,12 +97,14 @@ export default async function DiscoverPage() {
     .map((c) => c.id)
     .filter((id) => !excludedIds.has(id));
 
-  const { data: candidateInterestRows } = candidateIds.length
+  const { data: candidateInterestRows, error: candidateInterestError } = candidateIds.length
     ? await supabase
         .from("user_interests")
         .select("user_id, interest_id, interests(id, label)")
         .in("user_id", candidateIds)
-    : { data: [] as Array<{ user_id: string; interest_id: string; interests: { id: string; label: string } | null }> };
+    : { data: [] as Array<{ user_id: string; interest_id: string; interests: { id: string; label: string } | null }>, error: null };
+  const matchError = candidatesError ?? candidateInterestError;
+  if (matchError) console.error("Discover suggestions could not be loaded", { code: matchError.code });
 
   const interestsByUser = new Map<
     string,
@@ -133,21 +149,25 @@ export default async function DiscoverPage() {
     .slice(0, 20);
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <AppLayout>
+    <main className="mx-auto max-w-2xl py-4">
       <h1 className="text-3xl font-bold">Discover</h1>
         <p className="mt-2 text-sm text-text-soft">
         People who share your interests. Ranked by mutual-interest overlap.
       </p>
 
-      <div className="mt-6 space-y-3">
+      {matchError ? <div role="alert" className="apple-card mt-6 p-6 text-center"><p className="font-semibold">Suggestions couldn’t load right now.</p><p className="mt-2 text-sm text-text-soft">Please refresh in a moment and try again.</p></div> : <div className="mt-6 space-y-3">
         {ranked.length === 0 ? (
-          <p className="py-12 text-center text-text-tertiary">
-            No matches yet. Add more interests on your profile to see suggestions.
-          </p>
+          <div className="apple-card flex flex-col items-center px-6 py-10 text-center">
+            <p className="font-semibold text-text-main">Your next friend may share one of your interests.</p>
+            <p className="mt-2 max-w-sm text-sm leading-6 text-text-soft">We couldn’t find a match yet. Add more interests to help us find people you’ll connect with.</p>
+            <Link href="/onboarding" className="mt-5 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark">Update your interests</Link>
+          </div>
         ) : (
           ranked.map((c) => <DiscoverCard key={c.id} candidate={c} />)
         )}
-      </div>
+      </div>}
     </main>
+    </AppLayout>
   );
 }

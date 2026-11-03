@@ -12,6 +12,7 @@ import { verifySession } from "@/lib/dal";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 interface PostPageProps {
   // In Next 15+, dynamic route params are async. See AGENTS.md.
@@ -87,7 +88,8 @@ export default async function PostPage({ params }: PostPageProps) {
     });
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <AppLayout>
+    <main className="mx-auto max-w-2xl py-4">
       <Link
         href="/feed"
         className="mb-4 inline-block text-sm text-text-tertiary hover:text-accent transition-fast"
@@ -148,5 +150,6 @@ export default async function PostPage({ params }: PostPageProps) {
         </ul>
       </section>
     </main>
+    </AppLayout>
   );
 }

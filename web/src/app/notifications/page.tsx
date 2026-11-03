@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import { markNotificationsReadAction } from "@/app/actions/messages";
 import { verifySession } from "@/lib/dal";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { AppLayout } from "@/components/layout/AppLayout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Activity" };
 
 interface NotificationRow {
   id: string;
@@ -44,7 +48,8 @@ export default async function NotificationsPage() {
   const actorById = new Map((actorProfilesData ?? []).map((profile) => [profile.id, profile]));
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
+    <AppLayout>
+    <main className="mx-auto max-w-3xl py-4">
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Notifications</h1>
@@ -109,5 +114,6 @@ export default async function NotificationsPage() {
         )}
       </div>
     </main>
+    </AppLayout>
   );
 }

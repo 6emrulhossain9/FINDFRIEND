@@ -26,26 +26,28 @@ export function Avatar({
   className = "",
   fallback,
 }: AvatarProps) {
-  const [loaded, setLoaded] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const sizeClass = sizeClasses[size];
 
-  if (src) {
+  if (src && failedSrc !== src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={src}
         alt={alt}
-        onLoad={() => setLoaded(true)}
-        className={`${sizeClass} rounded-full object-cover bg-surface-hover transition-opacity duration-200 ease-out ${loaded ? "opacity-100" : "opacity-0"} ${className}`}
+        onError={() => setFailedSrc(src)}
+        className={`${sizeClass} rounded-full bg-surface-hover object-cover ${className}`}
       />
     );
   }
 
   return (
     <div
-      className={`${sizeClass} rounded-full bg-surface-hover flex items-center justify-center text-text-soft font-medium ${className}`}
+      role={alt ? "img" : undefined}
+      aria-label={alt || undefined}
+      className={`${sizeClass} flex items-center justify-center rounded-full bg-success-light font-semibold text-accent ${className}`}
     >
-      {fallback ?? "👤"}
+      {fallback ?? (alt.trim().split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "F")}
     </div>
   );
 }

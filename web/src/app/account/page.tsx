@@ -5,8 +5,11 @@ import { redirect } from "next/navigation";
 
 import { verifySession } from "@/lib/dal";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { signOutAction } from "@/app/actions/auth";
 import { FriendRequestInbox, type PendingRequest } from "./FriendRequestInbox";
+import { AppLayout } from "@/components/layout/AppLayout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Account" };
 
 export default async function AccountPage() {
   const session = await verifySession();
@@ -46,73 +49,32 @@ export default async function AccountPage() {
   });
 
   return (
-    <main className="mx-auto flex min-h-[80vh] max-w-md flex-col gap-6 px-6 py-12">
-      <h1 className="text-2xl font-semibold text-text-main">Your account</h1>
+    <AppLayout>
+    <main className="mx-auto flex max-w-2xl flex-col gap-6 py-4">
+      <header><p className="text-sm font-semibold text-accent">Your space</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-text-main">Account</h1><p className="mt-2 text-sm text-text-soft">Manage your profile and see new friend requests.</p></header>
 
-      <section className="apple-card p-5 space-y-3">
-        <p className="text-sm text-text-soft">Signed in as</p>
-        <p className="font-medium text-text-main">{session.user.email}</p>
+      <section className="apple-card space-y-4 p-5 sm:p-6">
+        <div><p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Email address</p><p className="mt-1 font-medium text-text-main">{session.user.email}</p></div>
         {profile?.display_name && (
-          <div className="pt-3 border-t border-separator">
-            <p className="text-sm text-text-soft">Display name</p>
+          <div className="border-t border-separator pt-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Display name</p>
             <p className="mt-1 font-medium text-text-main">{profile.display_name}</p>
           </div>
         )}
         {profile?.bio && (
           <div>
-            <p className="text-sm text-text-soft">Bio</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">About you</p>
             <p className="mt-1 text-text-main">{profile.bio}</p>
           </div>
         )}
+        {profile?.display_name ? <Link href="/onboarding" className="inline-flex min-h-10 items-center rounded-full border border-border-base px-4 text-sm font-semibold text-text-main transition-fast hover:bg-surface-hover">Edit profile and interests</Link> : null}
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-text-main">Friend requests</h2>
+        <div><h2 className="text-lg font-semibold text-text-main">Friend requests</h2><p className="mt-1 text-sm text-text-soft">Say hello to someone who wants to connect.</p></div>
         <FriendRequestInbox requests={pendingRequests} />
       </section>
-
-      <div className="space-y-2">
-        <h2 className="text-sm font-semibold text-text-main">Navigate</h2>
-        <Link
-          href="/feed"
-          className="block rounded-full border border-border-base px-5 py-2.5 text-sm font-normal text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
-        >
-          Go to Feed
-        </Link>
-        <Link
-          href="/discover"
-          className="block rounded-full border border-border-base px-5 py-2.5 text-sm font-normal text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
-        >
-          Discover people
-        </Link>
-          <Link
-            href="/messages"
-            className="block rounded-full border border-border-base px-5 py-2.5 text-sm font-normal text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
-          >
-            Messages
-          </Link>
-          <Link
-            href="/notifications"
-            className="block rounded-full border border-border-base px-5 py-2.5 text-sm font-normal text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
-          >
-            Notifications
-          </Link>
-        <Link
-          href={`/profiles/${session.user.id}`}
-          className="block rounded-full border border-border-base px-5 py-2.5 text-sm font-normal text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
-        >
-          View Your Profile
-        </Link>
-      </div>
-
-      <form action={signOutAction}>
-        <button
-          type="submit"
-          className="w-full rounded-full border border-danger/30 px-5 py-2.5 text-sm font-normal text-danger transition-fast hover:bg-danger-light active:scale-[0.95]"
-        >
-          Sign out
-        </button>
-      </form>
     </main>
+    </AppLayout>
   );
 }

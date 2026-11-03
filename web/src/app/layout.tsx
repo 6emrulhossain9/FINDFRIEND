@@ -7,16 +7,15 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "ViCo — Make friends around the world",
-    template: "%s · ViCo",
+    default: "Friendnet — Find your people",
+    template: "%s · Friendnet",
   },
   description:
-    "A global friend-making social network. Meet people your age who share your interests.",
+    "Meet kind, interesting people around the world through shared interests and real conversation.",
   openGraph: {
-    title: "ViCo — Make friends around the world",
-    description:
-      "A global friend-making social network. Meet people your age who share your interests.",
-    siteName: "ViCo",
+    title: "Friendnet — Find your people",
+    description: "Meet kind, interesting people around the world through shared interests and real conversation.",
+    siteName: "Friendnet",
     type: "website",
   },
 };

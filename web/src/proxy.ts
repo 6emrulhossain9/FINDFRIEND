@@ -7,7 +7,7 @@
 //      if the access token was close to expiry). This is required because
 //      `@supabase/ssr` cannot refresh tokens from a Server Component — only
 //      from a place with mutable cookies (proxy/route handler/server action).
-//   2. Redirect anonymous users away from /account/* to /login.
+//   2. Redirect anonymous users away from member-only pages to /login.
 //
 // What this proxy does NOT do:
 //   - It does not read the database. The DAL does that in Server Components.
@@ -17,7 +17,16 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { createMiddlewareSupabase } from "@/lib/supabase/middleware";
 
-const PROTECTED_PREFIXES = ["/account"];
+const PROTECTED_PREFIXES = [
+  "/account",
+  "/feed",
+  "/discover",
+  "/messages",
+  "/notifications",
+  "/profiles",
+  "/post",
+  "/onboarding",
+];
 
 export default async function proxy(request: NextRequest) {
   // Prepare a response we can mutate — Supabase may need to refresh cookies.

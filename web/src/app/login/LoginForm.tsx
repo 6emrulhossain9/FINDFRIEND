@@ -25,7 +25,7 @@ export function LoginForm({ next }: { next?: string }) {
             name="email"
             autoComplete="email"
             required
-            className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
+            className="min-h-11 rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none transition-fast focus:border-accent focus:ring-2 focus:ring-accent/15"
           />
           {showFieldErrors("email")?.map((e) => (
             <p key={e} className="text-xs text-danger">{e}</p>
@@ -39,7 +39,7 @@ export function LoginForm({ next }: { next?: string }) {
             name="password"
             autoComplete="current-password"
             required
-            className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
+            className="min-h-11 rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none transition-fast focus:border-accent focus:ring-2 focus:ring-accent/15"
           />
           {showFieldErrors("password")?.map((e) => (
             <p key={e} className="text-xs text-danger">{e}</p>
@@ -53,7 +53,7 @@ export function LoginForm({ next }: { next?: string }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.95] disabled:opacity-50"
+          className="min-h-11 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.98] disabled:opacity-50"
         >
           {pending ? "Signing in…" : "Sign in"}
         </button>
@@ -68,7 +68,7 @@ export function LoginForm({ next }: { next?: string }) {
       <form action={signInWithGoogleAction}>
         <button
           type="submit"
-          className="w-full rounded-full border border-border-base bg-transparent px-5 py-2.5 text-sm font-medium text-text-main transition-fast hover:bg-surface-hover active:scale-[0.95]"
+          className="min-h-11 w-full rounded-full border border-border-base bg-surface-card px-5 py-2.5 text-sm font-semibold text-text-main transition-fast hover:bg-surface-hover active:scale-[0.98]"
         >
           Continue with Google
         </button>

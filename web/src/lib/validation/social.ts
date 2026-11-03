@@ -5,18 +5,18 @@ import { z } from "zod";
 export const CreatePostSchema = z.object({
   content: z
     .string()
+    .trim()
     .min(1, { error: "Post cannot be empty." })
     .max(5000, { error: "Post is too long." })
-    .trim(),
 });
 
 export const CreateCommentSchema = z.object({
   post_id: z.string().uuid({ error: "Invalid post." }),
   content: z
     .string()
+    .trim()
     .min(1, { error: "Comment cannot be empty." })
     .max(1000, { error: "Comment is too long." })
-    .trim(),
 });
 
 export const AddReactionSchema = z.object({
@@ -54,6 +54,6 @@ export type ReportReason = z.infer<typeof ReportReasonEnum>;
 export type ReportUserInput = z.infer<typeof ReportUserSchema>;
 
 export type SocialFormState =
-  | { ok: false; message?: string; errors?: Record<string, string[]> }
+  | { ok: false; message?: string; errors?: Record<string, string[]>; recoveryHref?: string }
   | { ok: true }
   | undefined;

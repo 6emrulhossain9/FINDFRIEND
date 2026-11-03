@@ -36,14 +36,15 @@ function siteOrigin(): string {
 
 function fieldErrors(
   zodError: import("zod").ZodError,
-): Partial<Record<"email" | "password", string[]>> {
+): Partial<Record<"email" | "password" | "date_of_birth", string[]>> {
   // `flatten()` returns a typed shape on the success path; on a failed
   // parse the `fieldErrors` is `Record<string, string[] | undefined>`.
   // We narrow the keys we care about.
   const flat = zodError.flatten().fieldErrors as Record<string, string[] | undefined>;
-  const out: Partial<Record<"email" | "password", string[]>> = {};
+  const out: Partial<Record<"email" | "password" | "date_of_birth", string[]>> = {};
   if (Array.isArray(flat.email)) out.email = flat.email;
   if (Array.isArray(flat.password)) out.password = flat.password;
+  if (Array.isArray(flat.date_of_birth)) out.date_of_birth = flat.date_of_birth;
   return out;
 }
 
@@ -62,7 +63,7 @@ export async function loginAction(
   }
 
   const supabase = await createServerSupabase();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
     // Map common auth errors to a user-safe message; do not leak the raw
     // Supabase text — it sometimes contains internal reasons.
@@ -73,6 +74,35 @@ export async function loginAction(
     return { ok: false, message };
   }
 
+  if (data.user) {
+    const { data: profile, error: profileLookupError } = await supabase
+      .from("profiles")
+      .select("onboarding_state")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    if (profileLookupError) {
+      console.error("Profile lookup after sign-in failed", { code: profileLookupError.code });
+      return { ok: false, message: "You’re signed in, but we couldn’t load your profile. Please try again." };
+    }
+
+    if (!profile) {
+      const dateOfBirth = data.user.user_metadata?.date_of_birth;
+      const { error: profileCreateError } = await supabase.from("profiles").insert({
+        id: data.user.id,
+        date_of_birth: typeof dateOfBirth === "string" ? dateOfBirth : null,
+        onboarding_state: "pending",
+      });
+      if (profileCreateError && profileCreateError.code !== "23505") {
+        console.error("Profile recovery after sign-in failed", { code: profileCreateError.code });
+        return { ok: false, message: "We couldn’t finish preparing your profile. Please try again." };
+      }
+      redirect("/onboarding");
+    }
+
+    if (profile.onboarding_state !== "active") redirect("/onboarding");
+  }
+
   // Redirect on success. `redirect()` throws — code below it is unreachable.
   const next = (formData.get("next") as string | null) || "/account";
   redirect(safeNext(next));
@@ -80,10 +110,13 @@ export async function loginAction(
 
 function safeNext(input: string | null): string {
   if (!input) return "/account";
-  // Only allow same-origin, absolute paths. Block protocol-relative URLs and
-  // anything that isn't a path. This prevents open-redirect attacks.
-  if (!input.startsWith("/") || input.startsWith("//")) return "/account";
-  return input;
+  try {
+    const destination = new URL(input, "https://friendnet.invalid");
+    if (destination.origin !== "https://friendnet.invalid") return "/account";
+    return `${destination.pathname}${destination.search}${destination.hash}`;
+  } catch {
+    return "/account";
+  }
 }
 
 // --- sign up ---------------------------------------------------------------

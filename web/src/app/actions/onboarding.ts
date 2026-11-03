@@ -1,52 +1,27 @@
-// Onboarding server action (Phase 1)
-//
-// Handles:
-//  - Profile completion (display name, bio)
-//  - Interest selection (5+ required)
-//  - Sets onboarding_state to 'active'
-//  - Redirects to /account (future: /discover)
-
 "use server";
 
 import { redirect } from "next/navigation";
-
 import { createServerSupabase } from "@/lib/supabase/server";
-import {
-  OnboardingSchema,
-  OnboardingFormState,
-} from "@/lib/validation/auth";
+import { OnboardingSchema, type OnboardingFormState } from "@/lib/validation/auth";
 import { verifySession } from "@/lib/dal";
 
-function fieldErrors(
-  zodError: import("zod").ZodError,
-): Partial<Record<"display_name" | "bio" | "interests", string[]>> {
-  const flat = zodError.flatten().fieldErrors as Record<string, string[] | undefined>;
-  const out: Partial<Record<"display_name" | "bio" | "interests", string[]>> = {};
-  if (Array.isArray(flat.display_name)) out.display_name = flat.display_name;
-  if (Array.isArray(flat.bio)) out.bio = flat.bio;
-  if (Array.isArray(flat.interests)) out.interests = flat.interests;
-  return out;
+function fieldErrors(error: import("zod").ZodError): Partial<Record<"display_name" | "bio" | "interests", string[]>> {
+  const fields = error.flatten().fieldErrors as Record<string, string[] | undefined>;
+  return {
+    ...(fields.display_name ? { display_name: fields.display_name } : {}),
+    ...(fields.bio ? { bio: fields.bio } : {}),
+    ...(fields.interests ? { interests: fields.interests } : {}),
+  };
 }
 
-export async function onboardingAction(
-  _prev: OnboardingFormState,
-  formData: FormData,
-): Promise<OnboardingFormState> {
-  // Verify session first
+export async function onboardingAction(_previous: OnboardingFormState, formData: FormData): Promise<OnboardingFormState> {
   const session = await verifySession();
-  if (!session) {
-    return { ok: false, message: "You must be signed in to complete onboarding." };
-  }
+  if (!session) return { ok: false, message: "Sign in to finish setting up your profile." };
 
-  // Parse and validate input
-  const interestsRaw = formData.get("interests");
-  let interestIds: string[] = [];
-  if (typeof interestsRaw === "string") {
-    try {
-      interestIds = JSON.parse(interestsRaw);
-    } catch {
-      // If JSON parse fails, interests will be empty and validation will catch it
-    }
+  let interestIds: unknown = [];
+  const rawInterests = formData.get("interests");
+  if (typeof rawInterests === "string") {
+    try { interestIds = JSON.parse(rawInterests); } catch { /* Validation below will return a clear message. */ }
   }
 
   const parsed = OnboardingSchema.safeParse({
@@ -54,49 +29,61 @@ export async function onboardingAction(
     bio: formData.get("bio"),
     interests: interestIds,
   });
-
-  if (!parsed.success) {
-    return { ok: false, errors: fieldErrors(parsed.error) };
-  }
+  if (!parsed.success) return { ok: false, errors: fieldErrors(parsed.error) };
 
   const supabase = await createServerSupabase();
   const userId = session.user.id;
-
   try {
-    // Update profile with display_name, bio, and set onboarding_state to 'active'
-    const { error: profileError } = await supabase
+    const { data: existingProfile, error: profileLookupError } = await supabase
       .from("profiles")
-      .update({
-        display_name: parsed.data.display_name,
-        bio: parsed.data.bio,
-        onboarding_state: "active",
-      })
-      .eq("id", userId);
-
-    if (profileError) {
-      console.error("Profile update error:", profileError);
-      return { ok: false, message: "Could not update your profile. Please try again." };
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+    if (profileLookupError) {
+      console.error("Onboarding profile lookup failed", { code: profileLookupError.code });
+      return { ok: false, message: "We couldn’t load your profile. Please try again." };
+    }
+    if (!existingProfile) {
+      const dateOfBirth = session.user.user_metadata?.date_of_birth;
+      const { error: profileCreateError } = await supabase.from("profiles").insert({
+        id: userId,
+        date_of_birth: typeof dateOfBirth === "string" ? dateOfBirth : null,
+        onboarding_state: "pending",
+      });
+      if (profileCreateError && profileCreateError.code !== "23505") {
+        console.error("Onboarding profile recovery failed", { code: profileCreateError.code });
+        return { ok: false, message: "We couldn’t prepare your profile. Please try again." };
+      }
     }
 
-    // Insert user interests
-    const interestRows = parsed.data.interests.map((interestId) => ({
-      user_id: userId,
-      interest_id: interestId,
-    }));
+    // Replace the draft selection so a retry after a partial save stays safe.
+    const { error: clearError } = await supabase.from("user_interests").delete().eq("user_id", userId);
+    if (clearError) {
+      console.error("Onboarding interest reset failed", { code: clearError.code });
+      return { ok: false, message: "We couldn’t update your interests. Please try again." };
+    }
 
-    const { error: interestsError } = await supabase
-      .from("user_interests")
-      .insert(interestRows);
-
+    const interestRows = parsed.data.interests.map((interestId) => ({ user_id: userId, interest_id: interestId }));
+    const { error: interestsError } = await supabase.from("user_interests").insert(interestRows);
     if (interestsError) {
-      console.error("Interests insert error:", interestsError);
-      return { ok: false, message: "Could not save your interests. Please try again." };
+      console.error("Onboarding interests save failed", { code: interestsError.code });
+      return { ok: false, message: "We couldn’t save those interests. Please try again." };
     }
 
-    // Success: redirect to account page (future: discover page with instant matches)
-    redirect("/account");
-  } catch (err) {
-    console.error("Onboarding error:", err);
-    return { ok: false, message: "An unexpected error occurred. Please try again." };
+    const { error: profileError } = await supabase.from("profiles").update({
+      display_name: parsed.data.display_name,
+      bio: parsed.data.bio,
+      onboarding_state: "active",
+    }).eq("id", userId);
+    if (profileError) {
+      console.error("Onboarding profile save failed", { code: profileError.code });
+      return { ok: false, message: "We couldn’t save your profile yet. Please try again." };
+    }
+  } catch (error) {
+    console.error("Onboarding save failed", { name: error instanceof Error ? error.name : "unknown" });
+    return { ok: false, message: "Something interrupted setup. Please try again." };
   }
+
+  // Next.js redirect throws internally, so it must stay outside this catch.
+  redirect("/discover");
 }

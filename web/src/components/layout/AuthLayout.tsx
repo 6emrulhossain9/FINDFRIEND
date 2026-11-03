@@ -1,4 +1,5 @@
-/** Clean Apple-style centered auth layout for login / signup pages */
+import Link from "next/link";
+import { Globe2 } from "lucide-react";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -6,26 +7,22 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface px-4">
-      <div className="w-full max-w-sm">
-        {/* Logo area */}
-        <div className="mb-8 text-center animate-slide-up">
-          <h1 className="text-3xl font-bold text-accent">ViCo</h1>
-          <p className="mt-2 text-sm text-text-soft">
-            Make friends around the world
-          </p>
-        </div>
-
-        {/* Card containing the form */}
-        <div className="apple-card p-6 animate-slide-up" style={{ animationDelay: "100ms" }}>
-          {children}
-        </div>
-
-        {/* Footer */}
-        <p className="mt-6 text-center text-xs text-text-tertiary">
-          &copy; {new Date().getFullYear()} ViCo. All rights reserved.
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-success-light blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-36 -left-24 h-96 w-96 rounded-full bg-surface-pearl blur-3xl" />
+      <div className="relative w-full max-w-md animate-slide-up">
+        <Link href="/" className="mb-7 flex flex-col items-center text-center">
+          <span className="mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-accent text-white shadow-product">
+            <Globe2 aria-hidden="true" className="h-6 w-6" />
+          </span>
+          <span className="text-2xl font-bold tracking-tight text-text-main">Friendnet</span>
+          <span className="mt-1 text-sm text-text-soft">Good friends can be anywhere.</span>
+        </Link>
+        <div className="apple-card p-6 sm:p-8">{children}</div>
+        <p className="mt-5 text-center text-xs text-text-tertiary">
+          A kinder corner of the world, one connection at a time.
         </p>
       </div>
-    </div>
+    </main>
   );
 }

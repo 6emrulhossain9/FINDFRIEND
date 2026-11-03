@@ -15,7 +15,7 @@ export function SignupForm() {
   // Calculate max date (13 years ago) for the date input
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() - 13);
-  const maxDateStr = maxDate.toISOString().split('T')[0];
+  const maxDateStr = `${maxDate.getFullYear()}-${String(maxDate.getMonth() + 1).padStart(2, "0")}-${String(maxDate.getDate()).padStart(2, "0")}`;
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
@@ -26,7 +26,7 @@ export function SignupForm() {
           name="email"
           autoComplete="email"
           required
-          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
+          className="min-h-11 rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none transition-fast focus:border-accent focus:ring-2 focus:ring-accent/15"
         />
         {showFieldErrors("email")?.map((e) => (
           <p key={e} className="text-xs text-danger">{e}</p>
@@ -40,7 +40,7 @@ export function SignupForm() {
           name="date_of_birth"
           max={maxDateStr}
           required
-          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
+          className="min-h-11 rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none transition-fast focus:border-accent focus:ring-2 focus:ring-accent/15"
         />
         {showFieldErrors("date_of_birth")?.map((e) => (
           <p key={e} className="text-xs text-danger">{e}</p>
@@ -58,7 +58,7 @@ export function SignupForm() {
           autoComplete="new-password"
           minLength={8}
           required
-          className="rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none focus:ring-1 focus:ring-accent/30"
+          className="min-h-11 rounded-xl border border-border-base bg-surface px-4 py-2.5 outline-none transition-fast focus:border-accent focus:ring-2 focus:ring-accent/15"
         />
         {showFieldErrors("password")?.map((e) => (
           <p key={e} className="text-xs text-danger">{e}</p>
@@ -75,7 +75,7 @@ export function SignupForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-foreground px-4 py-2 text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="min-h-11 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-fast hover:bg-accent-dark active:scale-[0.98] disabled:opacity-60"
       >
         {pending ? "Creating account…" : "Create account"}
       </button>

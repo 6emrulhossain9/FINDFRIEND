@@ -12,6 +12,7 @@ import { verifySession } from "@/lib/dal";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { ProfileViewHeader } from "./ProfileViewHeader";
 import { FriendActionButtons } from "./FriendActionButtons";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 interface ProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -88,7 +89,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     .single();
 
   return (
-    <div className="min-h-screen bg-surface px-4 py-8">
+    <AppLayout>
+    <div className="mx-auto max-w-2xl py-4">
       <div className="mx-auto max-w-md">
         <ProfileViewHeader profile={profile} mutualCount={mutualCount} interests={interests} />
 
@@ -102,5 +104,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

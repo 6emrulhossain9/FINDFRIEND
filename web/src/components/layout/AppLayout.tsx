@@ -22,7 +22,7 @@ export async function AppLayout({ children }: AppLayoutProps) {
 
   let userData: { id: string; display_name: string | null; avatar_url: string | null } | null = null;
   let unreadNotifications = 0;
-  let unreadMessages = 0;
+  const unreadMessages = 0;
   let recentNotifications: NotificationItem[] = [];
 
   if (session) {
@@ -79,18 +79,17 @@ export async function AppLayout({ children }: AppLayoutProps) {
         unreadMessages={unreadMessages}
         recentNotifications={recentNotifications}
       />
-      <div className="flex pt-11 min-h-screen">
+      <div className="flex min-h-screen pt-16">
         <Sidebar
           user={userData}
           unreadNotifications={unreadNotifications}
           unreadMessages={unreadMessages}
         />
-        <main className="flex-1 min-h-[calc(100vh-3.5rem)] bg-surface-content">
-          <div className="mx-auto w-full max-w-7xl px-4 py-6">
+        <div className="min-w-0 flex-1 bg-surface-content pb-20 md:pb-8">
+          <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
             {children}
           </div>
-        </main>
-        {/* RightPanel placeholder — will be added in Phase E */}
+        </div>
       </div>
     </>
   );
